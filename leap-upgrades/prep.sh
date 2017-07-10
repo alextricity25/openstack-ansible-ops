@@ -27,12 +27,6 @@ source lib/functions.sh
 # Execute a preflight check
 pre_flight
 
-# Clone the Juno release so we have a clean copy of the source code.
-if [[ ! -f "/opt/leap42/openstack-ansible-${JUNO_RELEASE}-prep.leap" ]]; then
-  clone_release ${JUNO_RELEASE}
-  touch "/opt/leap42/openstack-ansible-${JUNO_RELEASE}-prep.leap"
-fi
-
 # Build the releases. This will clone all of the releases and check them out
 #  separately in addition to creating all of the venvs needed for a successful migration.
 if [[ ! -f "/opt/leap42/openstack-ansible-${KILO_RELEASE}-prep.leap" ]]; then

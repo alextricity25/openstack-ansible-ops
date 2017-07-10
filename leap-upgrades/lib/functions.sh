@@ -132,8 +132,8 @@ function validate_upgrade_input {
 
     echo
     warning "Please enter the source series to upgrade from."
-    notice "JUNO, KILO or LIBERTY"
-    read -p 'Enter "JUNO", "KILO", or "LIBERTY" to continue: ' UPGRADE_FROM
+    notice "JKILO or LIBERTY"
+    read -p '"KILO" or "LIBERTY" to continue: ' UPGRADE_FROM
     export INPUT_UPGRADE_FROM=${UPGRADE_FROM}
 
     if [[ ${INPUT_UPGRADE_FROM} == ${CODE_UPGRADE_FROM} ]]; then
@@ -151,41 +151,30 @@ function validate_upgrade_input {
 }
 
 function discover_code_version {
-    if [[ ! -f "/etc/openstack-release" ]]; then
-        export CODE_UPGRADE_FROM="JUNO"
-        notice "You seem to be running Juno"
-    else
-        source /etc/openstack-release
-        case "${DISTRIB_RELEASE%%.*}" in
-            '11')
-                export CODE_UPGRADE_FROM="KILO"
-                notice "You seem to be running Kilo"
-            ;;
-            '12')
-                export CODE_UPGRADE_FROM="LIBERTY"
-                notice "You seem to be running Liberty"
-            ;;
-            '13')
-                export CODE_UPGRADE_FROM="MITAKA"
-                notice "You seem to be running Mitaka"
-            ;;
-            '14')
-                export CODE_UPGRADE_FROM="NEWTON"
-                notice "You seem to be running Newton"
-            ;;
-        esac
-    fi
+    source /etc/openstack-release
+    case "${DISTRIB_RELEASE%%.*}" in
+        '11')
+            export CODE_UPGRADE_FROM="KILO"
+            notice "You seem to be running Kilo"
+        ;;
+        '12')
+            export CODE_UPGRADE_FROM="LIBERTY"
+            notice "You seem to be running Liberty"
+        ;;
+        '13')
+            export CODE_UPGRADE_FROM="MITAKA"
+            notice "You seem to be running Mitaka"
+        ;;
+        '14')
+            export CODE_UPGRADE_FROM="NEWTON"
+            notice "You seem to be running Newton"
+        ;;
+    esac
 }
 
 function set_upgrade_vars {
   notice "Setting up vars for the LEAP"
   case "${CODE_UPGRADE_FROM}" in
-  JUNO)
-    export RELEASE="${JUNO_RELEASE}"
-    export UPGRADES_TO_TODOLIST="KILO LIBERTY MITAKA NEWTON"
-    export ANSIBLE_INVENTORY="/opt/leap42/openstack-ansible-${RELEASE}/rpc_deployment/inventory"
-    export CONFIG_DIR="/etc/rpc_deploy"
-  ;;
   KILO)
     export RELEASE="${KILO_RELEASE}"
     export UPGRADES_TO_TODOLIST="LIBERTY MITAKA NEWTON"
@@ -360,11 +349,7 @@ function run_venv_prep {
       popd
     fi
 
-    if [[ -e "/etc/rpc_deploy" ]]; then
-      PB_DIR="/opt/leap42/openstack-ansible-${JUNO_RELEASE}/rpc_deployment"
-    else
-      PB_DIR="/opt/leap42/openstack-ansible-${KILO_RELEASE}/playbooks"
-    fi
+    PB_DIR="/opt/leap42/openstack-ansible-${KILO_RELEASE}/playbooks"
 
     pushd "${PB_DIR}"
       openstack-ansible "${UPGRADE_UTILS}/venv-prep.yml" -e "venv_tar_location=/opt/leap42/venvs/openstack-ansible-$1.tgz"

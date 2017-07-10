@@ -19,10 +19,6 @@
   gather_facts: false
   user: root
   tasks:
-    - name: Remove MariaDB repositories left over from Juno
-      shell: |
-        sed -i '/http:.*maria.*/d' /etc/apt/sources.list.d/*
-      ignore_errors: true
     - name: Remove MariaDB repositories left over from Mitaka
       apt_repository:
         repo: "deb https://mirror.rackspace.com/mariadb/repo/10.0/ubuntu trusty main"
